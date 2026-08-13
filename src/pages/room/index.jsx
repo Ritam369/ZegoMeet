@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 
+// Screen sharing is not supported on any mobile browser (OS restriction)
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 export default function RoomPage() {
   const { roomCode } = useParams();
   const navigate = useNavigate();
@@ -46,9 +49,14 @@ export default function RoomPage() {
           scenario: {
             mode: ZegoUIKitPrebuilt.VideoConference,
           },
-          showScreenSharingButton: true,
+          // Screen sharing is desktop-only — hide the button on mobile browsers
+          showScreenSharingButton: !isMobile,
           showPreJoinView: true,
           showMoreButton: true,
+          // Start with front camera on mobile, back camera switching is handled by ZegoCloud
+          useFrontFacingCamera: true,
+          // showRotatingScreenButton is ZegoCloud's dedicated mobile camera-flip button
+          showRotatingScreenButton: isMobile,
           whiteboardConfig: {
             showCreateAndCloseButton: true,
           },
